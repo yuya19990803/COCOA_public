@@ -22,6 +22,13 @@ let gameOver = false;
 let moleTimer;
 let oyajiTimer;
 
+/* ------------------------
+   ゲーム速度設定
+   1000 = 1秒
+------------------------ */
+const MOLE_INTERVAL = 1300;   // モグラが移動する間隔
+const OYAJI_INTERVAL = 5200;  // 親父が移動する間隔
+
 const cells = [];
 
 /* ------------------------
@@ -65,7 +72,6 @@ for (let i = 0; i < 15; i++) {
 ------------------------ */
 
 function moveMole() {
-
     if (gameOver) return;
 
     cells.forEach(cell => {
@@ -74,7 +80,9 @@ function moveMole() {
 
     currentMole = Math.floor(Math.random() * 15);
 
-    if (currentMole === currentOyaji) return;
+    while (currentMole === currentOyaji) {
+    currentMole = Math.floor(Math.random() * 15);
+}
 
     cells[currentMole].mole.classList.add("show");
 }
@@ -84,7 +92,6 @@ function moveMole() {
 ------------------------ */
 
 function spawnOyaji() {
-
     if (gameOver) return;
 
     cells.forEach(cell => {
@@ -105,17 +112,14 @@ function spawnOyaji() {
 ------------------------ */
 
 function hit(index) {
-
     if (gameOver) return;
 
     if (index === currentMole) {
-
-        score++;
-
-        scoreText.textContent = `Score : ${score}`;
-
-        cells[index].mole.classList.remove("show");
-    }
+    score++;
+    scoreText.textContent = `Score : ${score}`;
+    cells[index].mole.classList.remove("show");
+    currentMole = null;
+}
 
     else if (index === currentOyaji) {
 
@@ -145,11 +149,8 @@ function hit(index) {
 ------------------------ */
 
 function startGame() {
-
-    moleTimer = setInterval(moveMole, 1000);
-
-    oyajiTimer = setInterval(spawnOyaji, 5000);
-
+    moleTimer = setInterval(moveMole, MOLE_INTERVAL);
+    oyajiTimer = setInterval(spawnOyaji, OYAJI_INTERVAL);
     countdownTimer = setInterval(updateTimer, 1000);
 }
 
@@ -179,7 +180,7 @@ timerText.textContent =
 
 startScreen.classList.remove("hidden");
 
-startBtn.style.display = "block";
+startBtn.style.display = "";
 
 countdownText.textContent = "";
 
@@ -201,21 +202,25 @@ function updateTimer() {
         gameOver = true;
 
         if (score <= 5) {
-            rankName.textContent = "初心者モグラハンター";
-            rankImage.src = "images/初心者モグラハンター.png";
-        }
-        else if (score <= 15) {
-            rankName.textContent = "モグラ探検隊";
-            rankImage.src = "images/モグラ探検隊.png";
-        }
-        else if (score <= 25) {
-            rankName.textContent = "モグラ研究員";
-            rankImage.src = "images/モグラ研究員.png";
-        }
-        else {
-            rankName.textContent = "モグラ博士Ω";
-            rankImage.src = "images/モグラ博士Ω.png";
-        }
+    rankName.textContent = "初心者モグラハンター";
+    rankImage.src = "images/初心者モグラハンター.png";
+}
+else if (score <= 11) {
+    rankName.textContent = "モグラ探検隊";
+    rankImage.src = "images/モグラ探検隊.png";
+}
+else if (score <= 17) {
+    rankName.textContent = "モグラ研究員";
+    rankImage.src = "images/モグラ研究員.png";
+}
+else if (score <= 21) {
+    rankName.textContent = "モグラ博士Ω";
+    rankImage.src = "images/モグラ博士Ω.png";
+}
+else {
+    rankName.textContent = "モグノーベル賞";
+    rankImage.src = "images/モグノーベル賞.png";
+}
 
         gameOverScreen.classList.remove("hidden");
     }
